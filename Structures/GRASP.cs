@@ -139,7 +139,7 @@ namespace Structures
           best = candidate;
         }
 
-      } while (count >= MaxNoImprovements);
+      } while (count <= MaxNoImprovements);
 
       return best;
     }
