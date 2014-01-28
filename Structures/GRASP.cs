@@ -15,23 +15,9 @@ namespace Structures
   public class GRASP
   {
     private readonly int _maxIterations = 500;
-    private readonly int MaxNoImprovements = 50;
-    private readonly double GreedinessFactor = 0.3;
+    private readonly int _maxNoImprovements = 50;
+    private readonly double _greedinessFactor = 0.3;
     private readonly Random _random = new Random();
-
-
-//    private int[,] _berlinData = new int[,]
-//      {
-//        {565, 575}, {25, 185}, {345, 750}, {945, 685}, {845, 655},
-//        {880, 660}, {25, 230}, {525, 1000}, {580, 1175}, {650, 1130}, {1605, 620},
-//        {1220, 580}, {1465, 200}, {1530, 5}, {845, 680}, {725, 370}, {145, 665},
-//        {415, 635}, {510, 875}, {560, 365}, {300, 465}, {520, 585}, {480, 415},
-//        {835, 625}, {975, 580}, {1215, 245}, {1320, 315}, {1250, 400}, {660, 180},
-//        {410, 250}, {420, 555}, {575, 665}, {1150, 1160}, {700, 580}, {685, 595},
-//        {685, 610}, {770, 610}, {795, 645}, {720, 635}, {760, 650}, {475, 960},
-//        {95, 260}, {875, 920}, {700, 500}, {555, 815}, {830, 485}, {1170, 65},
-//        {830, 610}, {605, 625}, {595, 360}, {1340, 725}, {1740, 245}
-//      };
 
     private readonly List<City> _berlinData = new List<City>
       {
@@ -49,8 +35,8 @@ namespace Structures
     public GRASP(int maxIterations = 50, int maxNoImprovements = 50, double greedinessFactor = 0.3)
     {
       _maxIterations = maxIterations;
-      MaxNoImprovements = maxNoImprovements;
-      GreedinessFactor = greedinessFactor;
+      _maxNoImprovements = maxNoImprovements;
+      _greedinessFactor = greedinessFactor;
     }
 
     public void RunWithTestData()
@@ -64,8 +50,7 @@ namespace Structures
     /// </summary>
     public Candidate Search(List<City> cities)
     {
-      // Create a cruddy dummy instace to immediately disregard
-      // TODO: Refactor to something nicer
+      // Create a cruddy dummy instance to immediately disregard
       var best = new Candidate {Cost = int.MaxValue};
 
       for (int i = 0; i < _maxIterations; i++)
@@ -74,10 +59,7 @@ namespace Structures
         candidate = LocalSearch(candidate, cities);
         best = (candidate.Cost < best.Cost) ? candidate : best;
 
-       // if (i%100000 == 0)
-       // {
-          Console.WriteLine(" > iteration #{0}, best=#{1}", i + 1, best.Cost);
-        //}
+        Console.WriteLine(" > iteration #{0}, best=#{1}", i + 1, best.Cost);
       }
 
       return best;
@@ -86,7 +68,6 @@ namespace Structures
     public Candidate ConstructRandomizedGreedySolution(List<City> cities)
     {
       var candidate = new Candidate();
-     // int randomSize = _random.Next(cities.Length);
       candidate.Vector = new List<int>();
       candidate.Vector.Add(_random.Next(cities.Count));
 
@@ -111,7 +92,7 @@ namespace Structures
 
         for (int i = 0; i < costs.Count; i++)
         {
-          if (costs[i] <= (min + GreedinessFactor*(max - min)))
+          if (costs[i] <= (min + _greedinessFactor*(max - min)))
           {
             rcl.Add(candidates[i]);
           }
@@ -125,7 +106,6 @@ namespace Structures
 
     public Candidate LocalSearch(Candidate best, List<City> cities)
     {
-      // reference to max_no_improve
       int count = 0;
       do
       {
@@ -139,7 +119,7 @@ namespace Structures
           best = candidate;
         }
 
-      } while (count <= MaxNoImprovements);
+      } while (count <= _maxNoImprovements);
 
       return best;
     }
